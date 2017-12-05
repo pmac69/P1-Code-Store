@@ -1,0 +1,27 @@
+var P1Utils = Class.create();
+P1Utils.prototype = {
+    initialize: function() {
+    },
+	
+	// De-duplicate an array
+	deDuplicate: function(a) {	
+		return a.sort().filter(function(item, pos, ary) {
+			return !pos || item != ary[pos - 1];
+		});
+	},
+	
+	// Set all the send-ready emails to be sent to prevent a flood when turning email on
+	clearEmail: function() {
+		var email = new GlideRecord ('sys_email');
+		email.addQuery('type', 'send-ready');
+		//email.setLimit(10);
+		email.query();
+		while (email.next()) {
+			email.setWorkflow(false);
+			email.type = 'sent';
+			email.update();
+		}
+    },
+
+    type: 'P1Utils'
+};
